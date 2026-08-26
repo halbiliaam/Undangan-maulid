@@ -375,6 +375,18 @@
                             <tbody id="admin-table-body" class="divide-y divide-gray-200"></tbody>
                         </table>
                     </div>
+                    <!-- Bagian Manajemen Ucapan & Doa di Dashboard Admin -->
+<div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden mt-6">
+    <div class="p-5 border-b border-gray-200">
+        <h3 class="text-xs font-bold text-emeraldDark uppercase tracking-wider">Manajemen Ucapan & Doa Tamu</h3>
+    </div>
+    <div class="p-5">
+        <div id="admin-greetings-list" class="space-y-3 max-h-96 overflow-y-auto pr-1 text-xs">
+            <!-- Daftar ucapan akan dimuat di sini oleh JavaScript -->
+        </div>
+    </div>
+</div>
+
                 </div>
             </div>
         </div>
@@ -549,20 +561,65 @@ function toggleMusic() {
         }
 
         async function checkAdminAccess() {
-            const pwd = prompt('Masukkan Password Admin:');
-            if (pwd !== 'iaam2026') { alert('Password salah!'); window.location.hash = ''; window.location.reload(); return; }
-            
-            document.getElementById('page-form').classList.add('hidden');
-            document.getElementById('page-invitation').classList.add('hidden');
-            document.getElementById('page-admin').classList.remove('hidden');
+    const pwd = prompt('Masukkan Password Admin:');
+    if (pwd !== 'iaam2026') { alert('Password salah!'); window.location.hash = ''; window.location.reload(); return; }
+    
+    document.getElementById('page-form').classList.add('hidden');
+    document.getElementById('page-invitation').classList.add('hidden');
+    document.getElementById('page-admin').classList.remove('hidden');
 
-            const { data } = await supabaseClient.from('guests').select('*').order('created_at', { ascending: false });
-            if (data) {
-                allGuestsCache = data;
-                renderAdminTable(data);
-                calcStats(data);
-            }
-        }
+    const { data } = await supabaseClient.from('guests').select('*').order('created_at', { ascending: false });
+    if (data) {
+        allGuestsCache = data;
+        renderAdminTable(data);
+        calcStats(data);
+    }
+    
+    // Muat data ucapan khusus admin
+    loadAdminGreetings(); 
+}
+
+async function loadAdminGreetings() {
+    // Mengambil semua ucapan dari database
+    const { data, error } = await supabaseClient.from('greetings').select('*').order('created_at', { ascending: false });
+    const container = document.getElementById('admin-greetings-list');
+    
+    if (!container || error || !data) return;
+
+    if (data.length === 0) {
+        container.innerHTML = '<p class="text-gray-400 text-center py-4">Belum ada ucapan atau doa yang masuk.</p>';
+        return;
+    }
+
+    container.innerHTML = data.map(g => `
+        <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+            <div class="space-y-1">
+                <div class="flex items-center space-x-2">
+                    <strong class="text-emeraldDark font-bold text-xs">${g.name}</strong>
+                    <span class="text-[9px] text-gray-400">• ${new Date(g.created_at).toLocaleString()}</span>
+                </div>
+                <p class="text-gray-700 text-xs leading-relaxed">${g.message}</p>
+            </div>
+            <button onclick="deleteAdminGreeting('${g.id}')" class="px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg text-[10px] font-bold transition-all shrink-0">
+                Hapus Ucapan
+            </button>
+        </div>
+    `).join('');
+}
+
+async function deleteAdminGreeting(id) {
+    if (!confirm('Apakah Anda yakin ingin menghapus ucapan dan doa ini?')) return;
+
+    const { error } = await supabaseClient.from('greetings').delete().eq('id', id);
+    if (error) {
+        alert('Gagal menghapus ucapan: ' + error.message);
+        return;
+    }
+
+    // Refresh daftar ucapan di panel admin dan halaman utama
+    loadAdminGreetings();
+    loadGreetings(); 
+}
 
         function calcStats(data) {
             document.getElementById('stat-total').innerText = data.length;
