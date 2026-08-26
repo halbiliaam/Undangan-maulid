@@ -3,238 +3,459 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Undangan Digital - Maulidurrosul ﷺ IAAM</title>
+    <title>Undangan Digital Maulidurrosul ﷺ — IAAM</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-</head>
-<body class="bg-slate-950 text-slate-100 font-sans selection:bg-emerald-600 selection:text-white">
-
-    <!-- Background Audio -->
-    <audio id="bgAudio" loop src="https://actions.google.com/sounds/v1/ambiences/islamic_meditation_bells.ogg"></audio>
-
-    <!-- Floating Audio Button -->
-    <button id="audioToggle" onclick="toggleAudio()" class="fixed bottom-6 right-6 z-50 bg-emerald-600 hover:bg-emerald-500 text-white p-3 rounded-full shadow-2xl hidden items-center justify-center animate-bounce border-2 border-amber-400" title="Putar/Matikan Musik">
-        <i data-lucide="volume-x" id="audioIcon"></i>
-    </button>
-
-    <!-- ==================== VIEW 1: REGISTRATION / GATE ==================== -->
-    <div id="viewRegister" class="min-h-screen flex items-center justify-center p-4 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-emerald-950 via-slate-950 to-black relative overflow-hidden">
-        <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#d97706_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none"></div>
-
-        <div class="w-full max-w-md bg-slate-900/90 backdrop-blur-xl border border-emerald-500/30 rounded-2xl shadow-2xl p-6 sm:p-8 relative z-10">
-            <div class="text-center mb-6">
-                <div class="w-20 h-20 mx-auto mb-4 bg-emerald-900/50 border-2 border-amber-400/80 rounded-full flex items-center justify-center shadow-lg">
-                    <span class="text-2xl font-bold text-amber-400 tracking-wider">IAAM</span>
-                </div>
-                <span class="text-xs uppercase tracking-widest text-emerald-400 font-semibold">Ikatan Alumni Al-Falahul Makkiyah</span>
-                <h1 class="text-2xl sm:text-3xl font-bold text-white mt-1">MAULIDURROSUL ﷺ</h1>
-                <div class="w-16 h-1 bg-amber-400 mx-auto mt-2 rounded-full"></div>
-            </div>
-
-            <div class="bg-emerald-950/60 border border-emerald-800/50 rounded-xl p-4 mb-6 text-sm text-emerald-100/90 leading-relaxed text-center">
-                <p class="font-semibold text-amber-300 mb-1">Assalamu'alaikum Warahmatullahi Wabarakatuh</p>
-                <p>Silakan isi data diri terlebih dahulu untuk membuka undangan digital.</p>
-            </div>
-
-            <form id="formRegister" onsubmit="handleRegister(event)" class="space-y-4">
-                <div>
-                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1">Nama Lengkap & Gelar *</label>
-                    <input type="text" id="inputName" required placeholder="Contoh: Ahmad Fauzan, S.Pd." class="w-full bg-slate-950 border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-amber-400">
-                </div>
-
-                <div>
-                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1">Nomor WhatsApp *</label>
-                    <input type="tel" id="inputPhone" required placeholder="Contoh: 081234567890" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-amber-400">
-                </div>
-
-                <div>
-                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1">Konfirmasi Kehadiran *</label>
-                    <div class="grid grid-cols-3 gap-2">
-                        <button type="button" onclick="setAttendance('Hadir')" id="btnHadir" class="attendance-btn py-2 text-xs font-medium rounded-lg border bg-emerald-600 border-amber-400 text-white">Hadir</button>
-                        <button type="button" onclick="setAttendance('Tidak Hadir')" id="btnTidakHadir" class="attendance-btn py-2 text-xs font-medium rounded-lg border bg-slate-950 border-slate-800 text-slate-400">Tidak Hadir</button>
-                        <button type="button" onclick="setAttendance('Tentatif')" id="btnTentatif" class="attendance-btn py-2 text-xs font-medium rounded-lg border bg-slate-950 border-slate-800 text-slate-400">Tentatif</button>
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1">Jumlah Tamu</label>
-                    <div class="flex items-center space-x-3 bg-slate-950 border border-slate-700 rounded-lg p-2">
-                        <button type="button" onclick="adjustGuests(-1)" class="w-8 h-8 bg-slate-800 rounded-md text-amber-400 font-bold">-</button>
-                        <span id="guestCountDisplay" class="flex-1 text-center font-bold text-white">1 Orang</span>
-                        <button type="button" onclick="adjustGuests(1)" class="w-8 h-8 bg-slate-800 rounded-md text-amber-400 font-bold">+</button>
-                    </div>
-                </div>
-
-                <button type="submit" class="w-full mt-2 bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-500 text-amber-200 font-bold py-3.5 px-6 rounded-xl shadow-xl border border-amber-400/50 flex items-center justify-center space-x-2">
-                    <span>BUKA UNDANGAN</span>
-                    <i data-lucide="chevron-right" size="18"></i>
-                </button>
-            </form>
-
-            <div class="mt-6 pt-4 border-t border-slate-800 text-center">
-                <button onclick="openAdminLogin()" class="text-xs text-slate-400 hover:text-amber-400 inline-flex items-center space-x-1">
-                    <i data-lucide="lock" size="12"></i>
-                    <span>Masuk ke Dashboard Admin</span>
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- ==================== VIEW 2: INVITATION MAIN ==================== -->
-    <div id="viewInvitation" class="hidden min-h-screen">
-        <!-- Hero Section -->
-        <section class="relative min-h-screen flex flex-col items-center justify-center text-center p-6 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-emerald-900 via-slate-950 to-black border-b border-emerald-900/50">
-            <div class="absolute inset-0 opacity-15 bg-[radial-gradient(#fbbf24_1px,transparent_1px)] [background-size:20px_20px] pointer-events-none"></div>
-
-            <div class="relative z-10 max-w-xl mx-auto space-y-6">
-                <div class="w-24 h-24 mx-auto bg-emerald-950/80 border-2 border-amber-400 rounded-full flex items-center justify-center shadow-2xl">
-                    <span class="text-3xl font-extrabold text-amber-400">IAAM</span>
-                </div>
-
-                <div>
-                    <span class="text-xs sm:text-sm font-semibold tracking-widest text-emerald-400 uppercase">Ikatan Alumni Al-Falahul Makkiyah Majidiyah</span>
-                    <h1 class="text-4xl sm:text-6xl font-black text-white mt-2 tracking-wide">MAULIDURROSUL ﷺ</h1>
-                    <p class="text-amber-300/90 italic text-sm sm:text-base mt-2 px-4">"Meneladani Akhlak Rasulullah ﷺ, Mempererat Ukhuwah Alumni"</p>
-                </div>
-
-                <div class="bg-slate-900/80 border border-emerald-500/30 rounded-2xl p-6 backdrop-blur-md shadow-2xl max-w-md mx-auto">
-                    <p class="text-xs uppercase tracking-widest text-slate-400 mb-1">Undangan Khusus Kepada Yth.</p>
-                    <h2 id="guestNameDisplay" class="text-2xl font-bold text-amber-400 mb-2">-</h2>
-                    <div class="inline-block bg-emerald-950 border border-emerald-700/50 px-3 py-1 rounded-full text-xs text-emerald-300 mb-4">
-                        Status: <span id="guestStatusDisplay" class="font-bold text-amber-300">-</span>
-                    </div>
-                    <p class="text-xs text-slate-300 leading-relaxed">Dengan penuh rasa syukur, kami mengundang Bapak/Ibu/Saudara/i untuk hadir dalam acara Maulidurrosul ﷺ.</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- Detail Acara -->
-        <section class="py-16 px-6 bg-slate-900/50 border-y border-emerald-900/40">
-            <div class="max-w-4xl mx-auto text-center mb-10">
-                <span class="text-xs uppercase tracking-widest text-emerald-400 font-bold">Waktu & Tempat</span>
-                <h3 class="text-3xl font-bold text-white mt-1">Detail Pelaksanaan</h3>
-                <div class="w-16 h-1 bg-amber-400 mx-auto mt-2 rounded-full"></div>
-            </div>
-            <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="bg-slate-900 border border-emerald-500/30 rounded-2xl p-6 text-center">
-                    <i data-lucide="calendar" class="mx-auto text-amber-400 mb-3" size="28"></i>
-                    <h4 class="font-bold text-white mb-1">Hari & Tanggal</h4>
-                    <p class="text-sm text-emerald-200">Rabu, 18 September 2026</p>
-                </div>
-                <div class="bg-slate-900 border border-emerald-500/30 rounded-2xl p-6 text-center">
-                    <i data-lucide="clock" class="mx-auto text-amber-400 mb-3" size="28"></i>
-                    <h4 class="font-bold text-white mb-1">Waktu</h4>
-                    <p class="text-sm text-emerald-200">19:30 (Ba'da Isya) - Selesai</p>
-                </div>
-                <div class="bg-slate-900 border border-emerald-500/30 rounded-2xl p-6 text-center">
-                    <i data-lucide="map-pin" class="mx-auto text-amber-400 mb-3" size="28"></i>
-                    <h4 class="font-bold text-white mb-1">Lokasi</h4>
-                    <p class="text-sm text-emerald-200 mb-3">Gedung Serbaguna Al-Falahul Makkiyah</p>
-                    <a href="https://maps.google.com" target="_blank" class="inline-block bg-emerald-600 text-white text-xs font-bold py-2 px-4 rounded-lg">Google Maps</a>
-                </div>
-            </div>
-        </section>
-
-        <!-- Footer -->
-        <footer class="py-8 bg-slate-950 border-t border-emerald-950 text-center text-xs text-slate-500">
-            <p class="font-semibold text-emerald-400 mb-1">IAAM — Ikatan Alumni Al-Falahul Makkiyah Majidiyah</p>
-            <p>Digital Invitation System © 2026</p>
-        </footer>
-    </div>
-
-    <!-- ==================== VIEW 3: ADMIN LOGIN & PANEL ==================== -->
-    <div id="viewAdminLogin" class="hidden min-h-screen flex items-center justify-center p-4 bg-slate-950">
-        <div class="w-full max-w-sm bg-slate-900 border border-emerald-500/30 rounded-2xl p-8 shadow-2xl text-center">
-            <i data-lucide="lock" class="mx-auto text-amber-400 mb-4" size="32"></i>
-            <h2 class="text-xl font-bold text-white mb-1">Dashboard Admin</h2>
-            <p class="text-xs text-slate-400 mb-6">Masukkan PIN (Gunakan: 123456)</p>
-            <form onsubmit="handleAdminLogin(event)" class="space-y-4">
-                <input type="password" id="adminPinInput" required placeholder="PIN" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white text-center tracking-widest text-lg">
-                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl text-sm">Masuk</button>
-                <button type="button" onclick="location.reload()" class="w-full text-xs text-slate-400 pt-2">Kembali</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- Script Logika Sederhana -->
+    <!-- Google Fonts: Playfair Display & Plus Jakarta Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..700;1,400..700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- SheetJS untuk Export Excel -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    
     <script>
-        let currentAttendance = 'Hadir';
-        let currentGuestsCount = 1;
-        let isAudioPlaying = false;
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        emeraldDark: '#1B3B2B',
+                        emeraldHover: '#152e22',
+                        goldAccent: '#D4AF37',
+                        creamBg: '#FAF9F5',
+                    },
+                    fontFamily: {
+                        serif: ['"Playfair Display"', 'serif'],
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        arabic: ['Amiri', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .font-arabic { font-family: 'Amiri', serif; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade-in { animation: fadeIn 0.5s ease-out forwards; }
+    </style>
+</head>
+<body class="bg-creamBg text-emeraldDark font-sans antialiased selection:bg-goldAccent selection:text-white">
+
+    <!-- KONFIGURASI SUPABASE (Ganti dengan URL & Anon Key Supabase Anda) -->
+    <script>
+        const SUPABASE_URL = 'YOUR_SUPABASE_URL';
+        const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    </script>
+
+    <!-- CONTAINER UTAMA SPA (Single Page Application) -->
+    <div id="app">
+        <!-- 1. HALAMAN FORM WAJIB & ANTI-DUPLIKASI -->
+        <section id="page-form" class="min-h-screen flex items-center justify-center p-4">
+            <div class="w-full max-w-md bg-white border border-goldAccent/30 shadow-xl rounded-2xl p-6 sm:p-8 relative overflow-hidden animate-fade-in">
+                <div class="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-emeraldDark via-goldAccent to-emeraldDark"></div>
+                
+                <div class="text-center mb-6">
+                    <div class="inline-block px-3 py-1 rounded-full bg-emeraldDark/5 text-emeraldDark mb-3 border border-goldAccent/40">
+                        <span class="font-bold tracking-widest text-[10px] uppercase">LOGO IAAM</span>
+                    </div>
+                    <h1 class="text-xl sm:text-2xl font-serif font-bold text-emeraldDark">MAULIDURROSUL ﷺ</h1>
+                    <p class="text-[10px] uppercase tracking-widest text-goldAccent font-semibold mt-1">IAAM</p>
+                    <p class="text-xs text-gray-600">Ikatan Alumni Al-Falahul Makkiyah Majidiyah</p>
+                </div>
+
+                <div class="bg-creamBg p-3 rounded-lg border border-goldAccent/20 text-xs text-gray-700 leading-relaxed mb-6 text-center">
+                    Assalamu&apos;alaikum Warahmatullahi Wabarakatuh.<br><br>
+                    Sebelum membuka undangan, mohon isi data diri dan konfirmasi kehadiran terlebih dahulu.
+                </div>
+
+                <div id="form-error" class="hidden mb-4 p-3 bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg text-center"></div>
+
+                <form id="guest-form" class="space-y-4" onsubmit="handleFormSubmit(event)">
+                    <div>
+                        <label class="block text-[11px] font-semibold uppercase tracking-wider text-emeraldDark mb-1">Nama Lengkap</label>
+                        <input type="text" id="input-name" placeholder="Masukkan nama lengkap" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:border-emeraldDark text-xs bg-white">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-semibold uppercase tracking-wider text-emeraldDark mb-1">Nomor WhatsApp</label>
+                        <input type="tel" id="input-phone" placeholder="08xxxxxxxxxx" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:border-emeraldDark text-xs bg-white">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-semibold uppercase tracking-wider text-emeraldDark mb-1">Konfirmasi Kehadiran</label>
+                        <div class="grid grid-cols-3 gap-2">
+                            <button type="button" onclick="setAttendance('hadir')" id="btn-hadir" class="py-2 text-xs font-medium rounded-lg border bg-emeraldDark text-white border-emeraldDark transition-all">Hadir</button>
+                            <button type="button" onclick="setAttendance('tidak_hadir')" id="btn-tidak" class="py-2 text-xs font-medium rounded-lg border bg-white text-gray-700 border-gray-300 hover:border-emeraldDark transition-all">Tidak Hadir</button>
+                            <button type="button" onclick="setAttendance('tentatif')" id="btn-tentatif" class="py-2 text-xs font-medium rounded-lg border bg-white text-gray-700 border-gray-300 hover:border-emeraldDark transition-all">Tentatif</button>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-semibold uppercase tracking-wider text-emeraldDark mb-1">Jumlah Tamu</label>
+                        <div class="flex items-center justify-between bg-white border border-gray-300 rounded-lg px-4 py-2">
+                            <span class="text-xs text-gray-500">Total Orang</span>
+                            <div class="flex items-center space-x-4">
+                                <button type="button" onclick="adjustCount(-1)" class="w-7 h-7 rounded-full bg-gray-100 text-gray-700 font-bold">-</button>
+                                <span id="guest-count-val" class="text-xs font-semibold">1</span>
+                                <button type="button" onclick="adjustCount(1)" class="w-7 h-7 rounded-full bg-emeraldDark text-white font-bold">+</button>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" id="btn-submit" class="w-full py-3.5 bg-emeraldDark hover:bg-emeraldHover text-goldAccent font-bold rounded-lg shadow-lg tracking-wider uppercase text-xs transition-all">
+                        BUKA UNDANGAN
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- MODAL DUPLIKASI -->
+        <div id="modal-duplicate" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+            <div class="bg-white rounded-2xl max-w-sm w-full p-6 text-center border border-goldAccent">
+                <h3 class="text-base font-bold text-emeraldDark mb-2">Nomor Sudah Terdaftar</h3>
+                <p id="duplicate-text" class="text-xs text-gray-600 mb-6"></p>
+                <div class="flex space-x-3">
+                    <button onclick="closeDuplicateModal()" class="flex-1 py-2.5 border border-gray-300 text-gray-700 text-xs font-semibold rounded-lg">Batal</button>
+                    <button onclick="confirmUpdateDuplicate()" class="flex-1 py-2.5 bg-emeraldDark text-goldAccent text-xs font-semibold rounded-lg">PERBARUI DATA</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. HALAMAN UTAMA UNDANGAN (Hidden Awal) -->
+        <div id="page-invitation" class="hidden animate-fade-in pb-24">
+            <!-- Floating Music Button -->
+            <button onclick="toggleMusic()" class="fixed bottom-6 right-6 z-50 bg-emeraldDark text-goldAccent border border-goldAccent px-4 py-2.5 rounded-full shadow-2xl flex items-center space-x-2 text-xs font-bold">
+                <span id="music-icon">♫</span>
+                <span id="music-label">Musik</span>
+            </button>
+
+            <!-- Hero Cover -->
+            <section class="relative min-h-screen flex flex-col items-center justify-center text-center p-6 bg-gradient-to-b from-emeraldDark to-[#12271c] text-white">
+                <div class="max-w-md w-full mx-auto space-y-6">
+                    <div class="inline-block px-4 py-1.5 rounded-full bg-goldAccent/20 border border-goldAccent text-goldAccent text-[10px] font-bold uppercase tracking-widest">LOGO IAAM</div>
+                    <p class="font-arabic text-2xl text-goldAccent">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</p>
+                    <div>
+                        <h1 class="text-3xl font-serif font-bold text-white">MAULIDURROSUL ﷺ</h1>
+                        <p class="text-[10px] uppercase tracking-widest text-goldAccent mt-1 font-semibold">Ikatan Alumni Al-Falahul Makkiyah Majidiyah</p>
+                    </div>
+                    <div class="w-16 h-0.5 bg-goldAccent mx-auto opacity-70"></div>
+                    <p class="text-xs text-gray-200">Dengan penuh rasa syukur, kami mengundang:</p>
+                    <div class="p-4 bg-white/10 backdrop-blur-md rounded-xl border border-goldAccent/40">
+                        <p class="text-[10px] text-goldAccent uppercase tracking-wider font-semibold">Kepada Yth.</p>
+                        <h3 id="invitation-guest-name" class="text-lg font-serif font-bold text-white mt-1">-</h3>
+                        <p class="text-[10px] text-gray-300">di Tempat</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Detail Acara -->
+            <section class="py-16 px-6 max-w-xl mx-auto text-center">
+                <h2 class="text-2xl font-serif font-bold text-emeraldDark mb-2">Waktu & Tempat</h2>
+                <div class="w-12 h-1 bg-goldAccent mx-auto mb-8"></div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                    <div class="bg-white p-5 rounded-xl border border-goldAccent/30 shadow-sm">
+                        <h4 class="text-[10px] uppercase tracking-wider text-goldAccent font-bold mb-1">Hari & Tanggal</h4>
+                        <p class="text-xs font-semibold">Rabu, 15 Oktober 2026</p>
+                    </div>
+                    <div class="bg-white p-5 rounded-xl border border-goldAccent/30 shadow-sm">
+                        <h4 class="text-[10px] uppercase tracking-wider text-goldAccent font-bold mb-1">Waktu</h4>
+                        <p class="text-xs font-semibold">08:00 WIB - Selesai</p>
+                    </div>
+                </div>
+                <div class="bg-white p-5 rounded-xl border border-goldAccent/30 shadow-sm mb-6">
+                    <h4 class="text-[10px] uppercase tracking-wider text-goldAccent font-bold mb-1">Tempat</h4>
+                    <p class="text-sm font-serif font-bold text-emeraldDark">Gedung Serbaguna Al-Falahul Makkiyah</p>
+                    <p class="text-[11px] text-gray-600 mt-1">Jl. Pesantren No. 1, Majidiyah, Jawa Barat</p>
+                </div>
+                <a href="https://maps.google.com" target="_blank" class="inline-block px-6 py-3 bg-emeraldDark text-goldAccent text-xs font-bold uppercase tracking-wider rounded-lg shadow-md">📍 Buka Google Maps</a>
+            </section>
+
+            <!-- Tema Acara -->
+            <section class="py-12 px-6 bg-emeraldDark text-white text-center">
+                <div class="max-w-xl mx-auto space-y-3">
+                    <h3 class="text-[10px] uppercase tracking-widest text-goldAccent font-bold">Tema Acara</h3>
+                    <blockquote class="text-sm sm:text-base font-serif italic text-gray-100 leading-relaxed">
+                        &ldquo;Meneladani Akhlak Rasulullah ﷺ, Mempererat Ukhuwah Alumni dan Keluarga Besar Al-Falahul Makkiyah Majidiyah&rdquo;
+                    </blockquote>
+                </div>
+            </section>
+
+            <!-- Countdown -->
+            <section class="py-16 px-6 max-w-xl mx-auto text-center">
+                <h3 class="text-[10px] uppercase tracking-widest text-goldAccent font-bold mb-1">Menuju Acara</h3>
+                <h2 class="text-xl font-serif font-bold text-emeraldDark mb-6">Hitung Mundur</h2>
+                <div id="countdown-box" class="grid grid-cols-4 gap-3">
+                    <div class="bg-white p-3 rounded-xl border border-goldAccent/40"><span id="cd-days" class="text-lg font-bold font-serif text-emeraldDark">00</span><span class="block text-[9px] uppercase text-gray-500">Hari</span></div>
+                    <div class="bg-white p-3 rounded-xl border border-goldAccent/40"><span id="cd-hours" class="text-lg font-bold font-serif text-emeraldDark">00</span><span class="block text-[9px] uppercase text-gray-500">Jam</span></div>
+                    <div class="bg-white p-3 rounded-xl border border-goldAccent/40"><span id="cd-mins" class="text-lg font-bold font-serif text-emeraldDark">00</span><span class="block text-[9px] uppercase text-gray-500">Menit</span></div>
+                    <div class="bg-white p-3 rounded-xl border border-goldAccent/40"><span id="cd-secs" class="text-lg font-bold font-serif text-emeraldDark">00</span><span class="block text-[9px] uppercase text-gray-500">Detik</span></div>
+                </div>
+            </section>
+
+            <!-- Susunan Acara -->
+            <section class="py-16 px-6 max-w-md mx-auto">
+                <h2 class="text-2xl font-serif font-bold text-emeraldDark text-center mb-2">Rangkaian Acara</h2>
+                <div class="w-12 h-1 bg-goldAccent mx-auto mb-8"></div>
+                <div class="border-l-2 border-goldAccent pl-4 space-y-6 text-xs">
+                    <div><span class="font-bold text-goldAccent">08:00 - 08:30</span><h4 class="font-bold text-emeraldDark mt-0.5">Registrasi Tamu Undangan</h4></div>
+                    <div><span class="font-bold text-goldAccent">08:30 - 09:00</span><h4 class="font-bold text-emeraldDark mt-0.5">Pembukaan & Pembacaan Ayat Suci Al-Quran</h4></div>
+                    <div><span class="font-bold text-goldAccent">09:00 - 10:30</span><h4 class="font-bold text-emeraldDark mt-0.5">Pembacaan Maulid & Shalawat Bersama</h4></div>
+                    <div><span class="font-bold text-goldAccent">10:30 - 11:30</span><h4 class="font-bold text-emeraldDark mt-0.5">Tausiyah & Doa Bersama</h4></div>
+                    <div><span class="font-bold text-goldAccent">11:30 - Selesai</span><h4 class="font-bold text-emeraldDark mt-0.5">Penutup & Ramah Tamah</h4></div>
+                </div>
+            </section>
+
+            <!-- Buku Tamu & Ucapan -->
+            <section class="py-16 px-6 max-w-xl mx-auto">
+                <h2 class="text-2xl font-serif font-bold text-emeraldDark text-center mb-2">Ucapan & Doa</h2>
+                <div class="w-12 h-1 bg-goldAccent mx-auto mb-6"></div>
+                <div class="bg-white p-5 rounded-xl border border-goldAccent/30 shadow-sm space-y-3 mb-6">
+                    <input type="text" id="g-name" placeholder="Nama Anda" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-xs">
+                    <textarea id="g-msg" rows="3" placeholder="Tulis ucapan atau doa..." class="w-full px-3 py-2 rounded-lg border border-gray-300 text-xs"></textarea>
+                    <button onclick="sendGreeting()" class="w-full py-2.5 bg-emeraldDark text-goldAccent text-xs font-bold uppercase rounded-lg">Kirim Ucapan</button>
+                </div>
+                <div id="greetings-list" class="space-y-3 max-h-60 overflow-y-auto pr-1 text-xs"></div>
+            </section>
+
+            <!-- Footer -->
+            <footer class="py-10 px-6 bg-emeraldDark text-white text-center border-t border-goldAccent/30">
+                <div class="max-w-md mx-auto space-y-2">
+                    <h4 class="font-serif font-bold text-xs">IAAM — Ikatan Alumni Al-Falahul Makkiyah Majidiyah</h4>
+                    <p class="text-[11px] text-gray-300">Terima kasih atas kehadiran Anda. Wassalamu&apos;alaikum Warahmatullahi Wabarakatuh</p>
+                    <p class="text-[9px] text-gray-400 mt-3">&copy; 2026 IAAM</p>
+                </div>
+            </footer>
+        </div>
+
+        <!-- 3. HALAMAN DASHBOARD ADMIN (/admin) -->
+        <div id="page-admin" class="hidden min-h-screen bg-gray-50 p-4 sm:p-8">
+            <div class="max-w-5xl mx-auto space-y-6">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white p-4 rounded-xl shadow-sm border border-gray-200 gap-4">
+                    <div>
+                        <h1 class="text-lg font-bold text-emeraldDark">Dashboard Admin IAAM</h1>
+                        <p class="text-xs text-gray-500">Manajemen & Pendataan Tamu Undangan Maulidurrosul</p>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <button onclick="exportToExcel()" class="px-4 py-2 bg-emeraldDark text-goldAccent text-xs font-bold rounded-lg shadow">📊 Export Excel</button>
+                        <button onclick="logoutAdmin()" class="px-4 py-2 bg-red-50 text-red-600 text-xs font-bold rounded-lg">Logout</button>
+                    </div>
+                </div>
+
+                <!-- Statistik Cards -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                    <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm"><span class="text-[10px] text-gray-500 uppercase font-semibold">Total Tamu</span><h3 id="stat-total" class="text-xl font-bold text-emeraldDark mt-1">0</h3></div>
+                    <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm"><span class="text-[10px] text-emerald-600 uppercase font-semibold">Hadir</span><h3 id="stat-hadir" class="text-xl font-bold text-emerald-600 mt-1">0</h3></div>
+                    <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm"><span class="text-[10px] text-red-600 uppercase font-semibold">Tidak Hadir</span><h3 id="stat-tidak" class="text-xl font-bold text-red-600 mt-1">0</h3></div>
+                    <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm"><span class="text-[10px] text-yellow-600 uppercase font-semibold">Tentatif</span><h3 id="stat-tentatif" class="text-xl font-bold text-yellow-600 mt-1">0</h3></div>
+                </div>
+
+                <!-- Tabel Tamu -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                    <div class="p-4 border-b border-gray-200 flex justify-between items-center">
+                        <h3 class="text-xs font-bold text-emeraldDark uppercase tracking-wider">Daftar Tamu Terdaftar</h3>
+                        <input type="text" id="admin-search" oninput="filterGuests()" placeholder="Cari nama/no wa..." class="px-3 py-1.5 border rounded-lg text-xs w-48">
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs">
+                            <thead class="bg-gray-100 text-gray-700 uppercase font-semibold">
+                                <tr>
+                                    <th class="p-3">No</th>
+                                    <th class="p-3">Nama</th>
+                                    <th class="p-3">WhatsApp</th>
+                                    <th class="p-3">Kehadiran</th>
+                                    <th class="p-3">Jumlah</th>
+                                    <th class="p-3">Waktu Daftar</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-table-body" class="divide-y divide-gray-200"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT APLIKASI UTAMA -->
+    <script>
+        let currentAttendance = 'hadir';
+        let currentGuestData = null;
+        let allGuestsCache = [];
+        let audioElem = null;
+
+        // Routing sederhana via Hash (#admin atau default)
+        window.addEventListener('DOMContentLoaded', () => {
+            const hash = window.location.hash;
+            if (hash === '#admin') {
+                checkAdminAccess();
+            } else {
+                const saved = localStorage.getItem('iaam_guest');
+                if (saved) {
+                    currentGuestData = JSON.parse(saved);
+                    showInvitationPage();
+                }
+            }
+            startCountdown();
+            loadGreetings();
+        });
 
         function setAttendance(status) {
             currentAttendance = status;
-            ['Hadir', 'Tidak Hadir', 'Tentatif'].forEach(s => {
-                const btn = document.getElementById('btn' + s.replace(' ', ''));
-                if(s === status) {
-                    btn.className = "attendance-btn py-2 text-xs font-medium rounded-lg border bg-emerald-600 border-amber-400 text-white";
+            ['hadir', 'tidak', 'tentatif'].forEach(s => {
+                const btn = document.getElementById(`btn-${s}`);
+                if (s === status || (s === 'tidak' && status === 'tidak_hadir')) {
+                    btn.className = 'py-2 text-xs font-medium rounded-lg border bg-emeraldDark text-white border-emeraldDark transition-all';
                 } else {
-                    btn.className = "attendance-btn py-2 text-xs font-medium rounded-lg border bg-slate-950 border-slate-800 text-slate-400";
+                    btn.className = 'py-2 text-xs font-medium rounded-lg border bg-white text-gray-700 border-gray-300 hover:border-emeraldDark transition-all';
                 }
             });
         }
 
-        function adjustGuests(amount) {
-            currentGuestsCount = Math.max(1, currentGuestsCount + amount);
-            document.getElementById('guestCountDisplay').innerText = currentGuestsCount + ' Orang';
+        let guestCountVal = 1;
+        function adjustCount(val) {
+            guestCountVal = Math.max(1, guestCountVal + val);
+            document.getElementById('guest-count-val').innerText = guestCountVal;
         }
 
-        function handleRegister(e) {
+        async function handleFormSubmit(e) {
             e.preventDefault();
-            const name = document.getElementById('inputName').value;
+            const name = document.getElementById('input-name').value.trim();
+            const phone = document.getElementById('input-phone').value.trim();
+            const errDiv = document.getElementById('form-error');
+            errDiv.classList.add('hidden');
+
+            if (!name) { errDiv.innerText = 'Nama lengkap wajib diisi.'; errDiv.classList.remove('hidden'); return; }
+            if (!phone || !/^08[0-9]{8,11}$/.test(phone)) { errDiv.innerText = 'Masukkan nomor WhatsApp yang valid (08xxxxxxxxxx).'; errDiv.classList.remove('hidden'); return; }
+
+            // Cek duplikasi di Supabase
+            const { data: existing } = await supabaseClient.from('guests').select('*').eq('phone', phone).single();
+            if (existing) {
+                currentGuestData = existing;
+                document.getElementById('duplicate-text').innerHTML = `Nomor WhatsApp ini sudah terdaftar atas nama <b>${existing.name}</b>. Perbarui data?`;
+                document.getElementById('modal-duplicate').classList.remove('hidden');
+                return;
+            }
+
+            const { data, error } = await supabaseClient.from('guests').insert([{
+                name, phone, attendance_status: currentAttendance, guest_count: guestCountVal, invitation_opened: true
+            }]).select().single();
+
+            if (error) { errDiv.innerText = 'Gagal menyimpan data ke database.'; errDiv.classList.remove('hidden'); return; }
+
+            currentGuestData = data;
+            localStorage.setItem('iaam_guest', JSON.stringify(data));
+            showInvitationPage();
+        }
+
+        function closeDuplicateModal() { document.getElementById('modal-duplicate').classList.add('hidden'); }
+        async function confirmUpdateDuplicate() {
+            await supabaseClient.from('guests').update({ attendance_status: currentAttendance, guest_count: guestCountVal, invitation_opened: true }).eq('phone', currentGuestData.phone);
+            localStorage.setItem('iaam_guest', JSON.stringify(currentGuestData));
+            closeDuplicateModal();
+            showInvitationPage();
+        }
+
+        function showInvitationPage() {
+            document.getElementById('page-form').classList.add('hidden');
+            document.getElementById('page-admin').classList.add('hidden');
+            document.getElementById('page-invitation').classList.remove('hidden');
+            document.getElementById('invitation-guest-name').innerText = currentGuestData.name;
+        }
+
+        function toggleMusic() {
+            if (!audioElem) {
+                audioElem = new Audio('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3');
+                audioElem.loop = true;
+            }
+            if (audioElem.paused) {
+                audioElem.play().catch(() => {});
+                document.getElementById('music-label').innerText = 'Pause';
+            } else {
+                audioElem.pause();
+                document.getElementById('music-label').innerText = 'Musik';
+            }
+        }
+
+        function startCountdown() {
+            const target = new Date('2026-10-15T08:00:00').getTime();
+            setInterval(() => {
+                const now = new Date().getTime();
+                const dist = target - now;
+                if (dist > 0) {
+                    document.getElementById('cd-days').innerText = Math.floor(dist / (1000 * 60 * 60 * 24));
+                    document.getElementById('cd-hours').innerText = Math.floor((dist % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    document.getElementById('cd-mins').innerText = Math.floor((dist % (1000 * 60 * 60)) / (1000 * 60));
+                    document.getElementById('cd-secs').innerText = Math.floor((dist % (1000 * 60)) / 1000);
+                }
+            }, 1000);
+        }
+
+        async function sendGreeting() {
+            const name = document.getElementById('g-name').value || (currentGuestData ? currentGuestData.name : 'Tamu');
+            const message = document.getElementById('g-msg').value.trim();
+            if (!message) return;
+            await supabaseClient.from('greetings').insert([{ name, message, approved: true }]);
+            document.getElementById('g-msg').value = '';
+            loadGreetings();
+        }
+
+        async function loadGreetings() {
+            const { data } = await supabaseClient.from('greetings').select('*').eq('approved', true).order('created_at', { ascending: false });
+            const list = document.getElementById('greetings-list');
+            if (!list || !data) return;
+            list.innerHTML = data.map(g => `<div class="bg-white p-3 rounded-lg border shadow-sm"><strong class="text-emeraldDark">${g.name}</strong><p class="text-gray-700 mt-0.5">${g.message}</p></div>`).join('');
+        }
+
+        // ADMIN PANEL LOGIC
+        async function checkAdminAccess() {
+            const pwd = prompt('Masukkan Password Admin:');
+            if (pwd !== 'iaam2026') { alert('Password salah!'); window.location.hash = ''; window.location.reload(); return; }
             
-            document.getElementById('guestNameDisplay').innerText = name;
-            document.getElementById('guestStatusDisplay').innerText = currentAttendance;
+            document.getElementById('page-form').classList.add('hidden');
+            document.getElementById('page-invitation').classList.add('hidden');
+            document.getElementById('page-admin').classList.remove('hidden');
 
-            document.getElementById('viewRegister').classList.add('hidden');
-            document.getElementById('viewInvitation').classList.remove('hidden');
-            document.getElementById('audioToggle').classList.remove('hidden');
-            document.getElementById('audioToggle').classList.add('flex');
-
-            // Play Audio
-            const audio = document.getElementById('bgAudio');
-            audio.play().then(() => {
-                isAudioPlaying = true;
-                document.getElementById('audioIcon').setAttribute('data-lucide', 'volume-2');
-                lucide.createIcons();
-            }).catch(err => console.log("Audio auto-play blocked"));
-        }
-
-        function toggleAudio() {
-            const audio = document.getElementById('bgAudio');
-            const icon = document.getElementById('audioIcon');
-            if (isAudioPlaying) {
-                audio.pause();
-                isAudioPlaying = false;
-                icon.setAttribute('data-lucide', 'volume-x');
-            } else {
-                audio.play();
-                isAudioPlaying = true;
-                icon.setAttribute('data-lucide', 'volume-2');
-            }
-            lucide.createIcons();
-        }
-
-        function openAdminLogin() {
-            document.getElementById('viewRegister').classList.add('hidden');
-            document.getElementById('viewAdminLogin').classList.remove('hidden');
-        }
-
-        function handleAdminLogin(e) {
-            e.preventDefault();
-            const pin = document.getElementById('adminPinInput').value;
-            if(pin === '123456') {
-                alert('Login Berhasil! (Simulasi Dashboard Admin)');
-                location.reload();
-            } else {
-                alert('PIN Salah! Gunakan 123456');
+            const { data } = await supabaseClient.from('guests').select('*').order('created_at', { ascending: false });
+            if (data) {
+                allGuestsCache = data;
+                renderAdminTable(data);
+                calcStats(data);
             }
         }
 
-        // Inisialisasi Icon Lucide
-        lucide.createIcons();
+        function calcStats(data) {
+            document.getElementById('stat-total').innerText = data.length;
+            document.getElementById('stat-hadir').innerText = data.filter(x => x.attendance_status === 'hadir').length;
+            document.getElementById('stat-tidak').innerText = data.filter(x => x.attendance_status === 'tidak_hadir').length;
+            document.getElementById('stat-tentatif').innerText = data.filter(x => x.attendance_status === 'tentatif').length;
+        }
+
+        function renderAdminTable(data) {
+            const tbody = document.getElementById('admin-table-body');
+            tbody.innerHTML = data.map((g, idx) => `
+                <tr class="hover:bg-gray-50">
+                    <td class="p-3">${idx + 1}</td>
+                    <td class="p-3 font-semibold text-emeraldDark">${g.name}</td>
+                    <td class="p-3">${g.phone}</td>
+                    <td class="p-3"><span class="px-2 py-0.5 rounded text-[10px] uppercase font-bold ${g.attendance_status === 'hadir' ? 'bg-emerald-100 text-emerald-800' : 'bg-gray-100 text-gray-800'}">${g.attendance_status}</span></td>
+                    <td class="p-3">${g.guest_count} Orang</td>
+                    <td class="p-3 text-gray-500">${new Date(g.created_at).toLocaleDateString()}</td>
+                </tr>
+            `).join('');
+        }
+
+        function filterGuests() {
+            const query = document.getElementById('admin-search').value.toLowerCase();
+            const filtered = allGuestsCache.filter(g => g.name.toLowerCase().includes(query) || g.phone.includes(query));
+            renderAdminTable(filtered);
+        }
+
+        function exportToExcel() {
+            const ws = XLSX.utils.json_to_sheet(allGuestsCache);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Daftar Tamu");
+            XLSX.writeFile(wb, "Daftar_Tamu_Maulidurrosul_IAAM.xlsx");
+        }
+
+        function logoutAdmin() {
+            window.location.hash = '';
+            window.location.reload();
+        }
     </script>
 </body>
 </html>
