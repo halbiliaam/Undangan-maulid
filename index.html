@@ -453,25 +453,40 @@
         }
 
         function showInvitationPage() {
-            document.getElementById('page-form').classList.add('hidden');
-            document.getElementById('page-admin').classList.add('hidden');
-            document.getElementById('page-invitation').classList.remove('hidden');
-            document.getElementById('invitation-guest-name').innerText = currentGuestData.name;
-        }
+    document.getElementById('page-form').classList.add('hidden');
+    document.getElementById('page-admin').classList.add('hidden');
+    document.getElementById('page-invitation').classList.remove('hidden');
+    document.getElementById('invitation-guest-name').innerText = currentGuestData.name;
 
-        function toggleMusic() {
-            if (!audioElem) {
-                audioElem = new Audio('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3');
-                audioElem.loop = true;
-            }
-            if (audioElem.paused) {
-                audioElem.play().catch(() => {});
-                document.getElementById('music-label').innerText = 'Jeda Musik';
-            } else {
-                audioElem.pause();
-                document.getElementById('music-label').innerText = 'Putar Musik';
-            }
-        }
+    // --- AUTOPLAY MUSIK KETIKA UNDANGAN DIBUKA ---
+    if (!audioElem) {
+        audioElem = document.getElementById('bg-music');
+    }
+    if (audioElem) {
+        audioElem.play().then(() => {
+            document.getElementById('music-label').innerText = 'Jeda Musik';
+        }).catch(error => {
+            console.log("Autoplay dicegah oleh browser:", error);
+            document.getElementById('music-label').innerText = 'Putar Musik';
+        });
+    }
+}
+
+function toggleMusic() {
+    if (!audioElem) {
+        audioElem = document.getElementById('bg-music');
+    }
+    
+    if (audioElem.paused) {
+        audioElem.play().then(() => {
+            document.getElementById('music-label').innerText = 'Jeda Musik';
+        }).catch(err => console.log(err));
+    } else {
+        audioElem.pause();
+        document.getElementById('music-label').innerText = 'Putar Musik';
+    }
+}
+
 
         function startCountdown() {
             const target = new Date('2026-08-30T08:00:00').getTime();
@@ -569,5 +584,11 @@
             window.location.reload();
         }
     </script>
+    <!-- Elemen Audio Latar Belakang -->
+<audio id="bg-music" loop>
+    <source src="maher-zain-sallou-official-video-qcuhvw.mp3" type="audio/mpeg">
+    Browsermu tidak mendukung elemen audio.
+</audio>
+
 </body>
 </html>
