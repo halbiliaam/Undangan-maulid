@@ -312,7 +312,7 @@
             document.getElementById('guest-count-val').innerText = guestCountVal;
         }
 
-        async function handleFormSubmit(e) {
+                async function handleFormSubmit(e) {
             e.preventDefault();
             const name = document.getElementById('input-name').value.trim();
             const phone = document.getElementById('input-phone').value.trim();
@@ -322,33 +322,47 @@
             if (!name) { errDiv.innerText = 'Nama lengkap wajib diisi.'; errDiv.classList.remove('hidden'); return; }
             if (!phone || !/^08[0-9]{8,11}$/.test(phone)) { errDiv.innerText = 'Masukkan nomor WhatsApp yang valid (08xxxxxxxxxx).'; errDiv.classList.remove('hidden'); return; }
 
-            // Cek duplikasi di Supabase
-            const { data: existing } = await supabaseClient.from('guests').select('*').eq('phone', phone).single();
-            if (existing) {
-                currentGuestData = existing;
-                document.getElementById('duplicate-text').innerHTML = `Nomor WhatsApp ini sudah terdaftar atas nama <b>${existing.name}</b>. Perbarui data?`;
-                document.getElementById('modal-duplicate').classList.remove('hidden');
-                return;
+            try {
+                // Cek duplikasi menggunakan .maybeSingle() agar aman jika data belum ada
+                const { data: existing, error: checkError } = await supabaseClient
+                    .from('guests')
+                    .select('*')
+                    .eq('phone', phone)
+                    .maybeSingle();
+
+                if (checkError) {
+                    console.error("Check Error:", checkError);
+                }
+
+                if (existing) {
+                    currentGuestData = existing;
+                    document.getElementById('duplicate-text').innerHTML = `Nomor WhatsApp ini sudah terdaftar atas nama <b>${existing.name}</b>. Perbarui data?`;
+                    document.getElementById('modal-duplicate').classList.remove('hidden');
+                    return;
+                }
+
+                // Insert data baru jika belum terdaftar
+                const { data, error } = await supabaseClient.from('guests').insert([{
+                    name, phone, attendance_status: currentAttendance, guest_count: guestCountVal, invitation_opened: true
+                }]).select().single();
+
+                if (error) {
+                    console.error("Insert Error:", error);
+                    errDiv.innerText = 'Gagal menyimpan data ke database: ' + error.message;
+                    errDiv.classList.remove('hidden');
+                    return;
+                }
+
+                currentGuestData = data;
+                localStorage.setItem('iaam_guest', JSON.stringify(data));
+                showInvitationPage();
+            } catch (err) {
+                console.error("Catch Error:", err);
+                errDiv.innerText = 'Terjadi kesalahan koneksi ke database.';
+                errDiv.classList.remove('hidden');
             }
-
-            const { data, error } = await supabaseClient.from('guests').insert([{
-                name, phone, attendance_status: currentAttendance, guest_count: guestCountVal, invitation_opened: true
-            }]).select().single();
-
-            if (error) { errDiv.innerText = 'Gagal menyimpan data ke database.'; errDiv.classList.remove('hidden'); return; }
-
-            currentGuestData = data;
-            localStorage.setItem('iaam_guest', JSON.stringify(data));
-            showInvitationPage();
         }
 
-        function closeDuplicateModal() { document.getElementById('modal-duplicate').classList.add('hidden'); }
-        async function confirmUpdateDuplicate() {
-            await supabaseClient.from('guests').update({ attendance_status: currentAttendance, guest_count: guestCountVal, invitation_opened: true }).eq('phone', currentGuestData.phone);
-            localStorage.setItem('iaam_guest', JSON.stringify(currentGuestData));
-            closeDuplicateModal();
-            showInvitationPage();
-        }
 
         function showInvitationPage() {
             document.getElementById('page-form').classList.add('hidden');
