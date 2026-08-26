@@ -52,6 +52,12 @@
 
     <!-- CONTAINER UTAMA SPA -->
     <div id="app">
+
+        <!-- Floating Music Button -->
+            <button onclick="toggleMusic()" class="fixed bottom-6 right-6 z-50 bg-emeraldDark text-goldAccent border border-goldAccent/60 px-4.5 py-3 rounded-full shadow-2xl flex items-center space-x-2.5 text-xs font-bold tracking-wider hover:scale-105 transition-all">
+                <span id="music-icon" class="text-sm animate-spin">♫</span>
+                <span id="music-label">Putar Musik</span>
+            </button>
         
         <!-- 1. HALAMAN FORM REGISTRASI AWAL -->
         <section id="page-form" class="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-emeraldDark via-[#18382B] to-emeraldDark">
@@ -127,11 +133,7 @@
         <!-- 2. HALAMAN UTAMA UNDANGAN (PROFESSIONAL LUXURY STYLE) -->
         <div id="page-invitation" class="hidden animate-fade-in pb-24 bg-creamBg">
             
-            <!-- Floating Music Button -->
-            <button onclick="toggleMusic()" class="fixed bottom-6 right-6 z-50 bg-emeraldDark text-goldAccent border border-goldAccent/60 px-4.5 py-3 rounded-full shadow-2xl flex items-center space-x-2.5 text-xs font-bold tracking-wider hover:scale-105 transition-all">
-                <span id="music-icon" class="text-sm animate-spin">♫</span>
-                <span id="music-label">Putar Musik</span>
-            </button>
+            
 
                         <!-- Hero Cover Section -->
             <section class="relative min-h-screen flex flex-col items-center justify-center text-center p-6 bg-gradient-to-b from-emeraldDark via-emeraldCard to-emeraldDark text-white overflow-hidden">
