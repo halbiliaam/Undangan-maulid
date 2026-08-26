@@ -173,7 +173,7 @@
                                 <!-- BAGIAN PALING BAWAH (UJUNG COVER): Supported by & Gambar di Kanan -->
                 <div class="pb-6 pr-6 z-10 w-full max-w-md mx-auto flex flex-col items-end text-right">
                     <p class="text-[9px] uppercase tracking-[0.2em] text-gray-300 mb-1.5 font-medium">Supported by:</p>
-                    <img src="NAMA_FILE_GAMBAR_ANDA.png" alt="Support Logo" class="h-8 object-contain drop-shadow-md opacity-90">
+                    <img src="Bakso_20260331_112337_0000.png" alt="Support Logo" class="h-8 object-contain drop-shadow-md opacity-90">
                 </div>
 
             </section>
@@ -378,6 +378,7 @@
                                     <th class="p-4">Kehadiran</th>
                                     <th class="p-4">Jumlah</th>
                                     <th class="p-4">Waktu Daftar</th>
+                                    <th class="p-4 text-center">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody id="admin-table-body" class="divide-y divide-gray-200"></tbody>
@@ -637,24 +638,43 @@ async function deleteAdminGreeting(id) {
         }
 
         function renderAdminTable(data) {
-            const tbody = document.getElementById('admin-table-body');
-            tbody.innerHTML = data.map((g, idx) => `
-                <tr class="hover:bg-gray-50 transition-all">
-                    <td class="p-4 text-gray-500">${idx + 1}</td>
-                    <td class="p-4 font-bold text-emeraldDark">${g.name}</td>
-                    <td class="p-4 text-gray-600">${g.phone}</td>
-                    <td class="p-4"><span class="px-2.5 py-1 rounded-full text-[10px] uppercase font-bold tracking-wider ${g.attendance_status === 'hadir' ? 'bg-emerald-100 text-emerald-800' : g.attendance_status === 'tidak_hadir' ? 'bg-red-100 text-red-800' : 'bg-amber-100 text-amber-800'}">${g.attendance_status.replace('_', ' ')}</span></td>
-                    <td class="p-4 font-medium">${g.guest_count} Orang</td>
-                    <td class="p-4 text-gray-500">${new Date(g.created_at).toLocaleDateString()}</td>
-                </tr>
-            `).join('');
-        }
+    const tbody = document.getElementById('admin-table-body');
+    tbody.innerHTML = data.map((g, idx) => `
+        <tr class="hover:bg-gray-50 transition-all">
+            <td class="p-4 text-gray-500">${idx + 1}</td>
+            <td class="p-4 font-bold text-emeraldDark">${g.name}</td>
+            <td class="p-4 text-gray-600">${g.phone}</td>
+            <td class="p-4"><span class="px-2.5 py-1 rounded-full text-[10px] uppercase font-bold tracking-wider ${g.attendance_status === 'hadir' ? 'bg-emerald-100 text-emerald-800' : g.attendance_status === 'tidak_hadir' ? 'bg-red-100 text-red-800' : 'bg-amber-100 text-amber-800'}">${g.attendance_status.replace('_', ' ')}</span></td>
+            <td class="p-4 font-medium">${g.guest_count} Orang</td>
+            <td class="p-4 text-gray-500">${new Date(g.created_at).toLocaleDateString()}</td>
+            <td class="p-4 text-center">
+                <button onclick="deleteGuest('${g.id}')" class="px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg text-[10px] font-bold transition-all">Hapus</button>
+            </td>
+        </tr>
+    `).join('');
+}
 
         function filterGuests() {
             const query = document.getElementById('admin-search').value.toLowerCase();
             const filtered = allGuestsCache.filter(g => g.name.toLowerCase().includes(query) || g.phone.includes(query));
             renderAdminTable(filtered);
         }
+
+        async function deleteGuest(id) {
+    if (!confirm('Apakah Anda yakin ingin menghapus data tamu ini?')) return;
+    
+    const { error } = await supabaseClient.from('guests').delete().eq('id', id);
+    if (error) {
+        alert('Gagal menghapus data: ' + error.message);
+        return;
+    }
+    
+    // Perbarui cache dan tabel setelah dihapus
+    allGuestsCache = allGuestsCache.filter(g => g.id !== id);
+    renderAdminTable(allGuestsCache);
+    calcStats(allGuestsCache);
+}
+
 
         function exportToExcel() {
             const ws = XLSX.utils.json_to_sheet(allGuestsCache);
