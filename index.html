@@ -273,6 +273,34 @@
                 </div>
             </section>
 
+                        <!-- Opsi Edit Kehadiran Tamu -->
+            <section class="py-8 px-6 max-w-xl mx-auto">
+                <div class="bg-white p-6 rounded-3xl border border-goldAccent/30 shadow-sm text-center space-y-4">
+                    <h3 class="text-xs uppercase tracking-widest text-goldAccent font-bold">Konfirmasi Kehadiran Anda</h3>
+                    <p class="text-xs text-gray-600">Ingin mengubah status kehadiran atau jumlah orang yang hadir?</p>
+                    
+                    <div class="grid grid-cols-3 gap-2 pt-2">
+                        <button type="button" onclick="updateGuestAttendance('hadir')" id="inv-btn-hadir" class="py-2 text-xs font-semibold rounded-xl border transition-all shadow-sm">Hadir</button>
+                        <button type="button" onclick="updateGuestAttendance('tidak_hadir')" id="inv-btn-tidak" class="py-2 text-xs font-semibold rounded-xl border transition-all">Tidak Hadir</button>
+                        <button type="button" onclick="updateGuestAttendance('tentatif')" id="inv-btn-tentatif" class="py-2 text-xs font-semibold rounded-xl border transition-all">Tentatif</button>
+                    </div>
+
+                    <div class="flex items-center justify-between bg-creamBg border border-gray-200 rounded-xl px-4 py-2 mt-3">
+                        <span class="text-xs text-gray-600 font-medium">Jumlah Peserta</span>
+                        <div class="flex items-center space-x-3">
+                            <button type="button" onclick="adjustInvCount(-1)" class="w-7 h-7 rounded-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold flex items-center justify-center text-xs">-</button>
+                            <span id="inv-guest-count-val" class="text-xs font-bold text-emeraldDark">1</span>
+                            <button type="button" onclick="adjustInvCount(1)" class="w-7 h-7 rounded-full bg-emeraldDark text-white font-bold flex items-center justify-center text-xs">+</button>
+                        </div>
+                    </div>
+
+                    <button onclick="saveAttendanceChanges()" class="w-full py-2.5 bg-emeraldDark hover:bg-emeraldHover text-goldAccent text-xs font-bold uppercase tracking-wider rounded-xl shadow-md transition-all border border-goldAccent/40 mt-2">
+                        Simpan Perubahan Kehadiran
+                    </button>
+                </div>
+            </section>
+
+
             <!-- Susunan Acara -->
             <section class="py-12 px-6 max-w-md mx-auto">
                 <div class="text-center mb-10">
@@ -543,6 +571,72 @@ function toggleMusic() {
                 }
             }, 1000);
         }
+
+                let activeAttendanceStatus = 'hadir';
+        let activeGuestCount = 1;
+
+        // Panggil fungsi ini saat halaman undangan dimuat untuk mencocokkan status awal dari data tamu
+        function initInvitationStatus() {
+            if (!currentGuestData) return;
+            activeAttendanceStatus = currentGuestData.attendance_status || 'hadir';
+            activeGuestCount = currentGuestData.guest_count || 1;
+            
+            document.getElementById('inv-guest-count-val').innerText = activeGuestCount;
+            updateInvAttendanceUI(activeAttendanceStatus);
+        }
+
+        function updateGuestAttendance(status) {
+            activeAttendanceStatus = status;
+            updateInvAttendanceUI(status);
+        }
+
+        function updateInvAttendanceUI(status) {
+            ['hadir', 'tidak_hadir', 'tentatif'].forEach(s => {
+                const btnId = s === 'tidak_hadir' ? 'inv-btn-tidak' : `inv-btn-${s}`;
+                const btn = document.getElementById(btnId);
+                if (!btn) return;
+                
+                if (s === status) {
+                    btn.className = 'py-2 text-xs font-semibold rounded-xl border bg-emeraldDark text-white border-emeraldDark transition-all shadow-sm';
+                } else {
+                    btn.className = 'py-2 text-xs font-semibold rounded-xl border bg-white text-gray-700 border-gray-300 hover:border-emeraldDark transition-all';
+                }
+            });
+        }
+
+        function adjustInvCount(val) {
+            activeGuestCount = Math.max(1, activeGuestCount + val);
+            document.getElementById('inv-guest-count-val').innerText = activeGuestCount;
+        }
+
+        async function saveAttendanceChanges() {
+            if (!currentGuestData || !currentGuestData.phone) {
+                alert('Data tamu tidak ditemukan.');
+                return;
+            }
+
+            // Update ke database Supabase berdasarkan nomor telepon unik tamu
+            const { error } = await supabaseClient
+                .from('guests')
+                .update({ 
+                    attendance_status: activeAttendanceStatus, 
+                    guest_count: activeGuestCount 
+                })
+                .eq('phone', currentGuestData.phone);
+
+            if (error) {
+                alert('Gagal memperbarui data: ' + error.message);
+                return;
+            }
+
+            // Perbarui cache data lokal
+            currentGuestData.attendance_status = activeAttendanceStatus;
+            currentGuestData.guest_count = activeGuestCount;
+            localStorage.setItem('iaam_guest', JSON.stringify(currentGuestData));
+
+            alert('Konfirmasi kehadiran berhasil diperbarui!');
+        }
+
 
         async function sendGreeting() {
             const nameField = document.getElementById('g-name');
