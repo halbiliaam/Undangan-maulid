@@ -229,7 +229,7 @@
                     <div class="bg-white p-6 rounded-2xl border border-goldAccent/30 shadow-sm text-center flex flex-col justify-center">
                         <div class="w-10 h-10 rounded-full bg-emeraldDark/5 text-emeraldDark mx-auto flex items-center justify-center mb-2 border border-goldAccent/30 text-base">📅</div>
                         <h4 class="text-[10px] uppercase tracking-wider text-goldAccent font-bold mb-1">Hari & Tanggal</h4>
-                        <p class="text-xs sm:text-sm font-bold text-emeraldDark">Senin, 31 September 2026</p>
+                        <p class="text-xs sm:text-sm font-bold text-emeraldDark">Rabu, 02 September 2026</p>
                     </div>
                     <div class="bg-white p-6 rounded-2xl border border-goldAccent/30 shadow-sm text-center flex flex-col justify-center">
                         <div class="w-10 h-10 rounded-full bg-emeraldDark/5 text-emeraldDark mx-auto flex items-center justify-center mb-2 border border-goldAccent/30 text-base">⏰</div>
@@ -383,7 +383,7 @@
                 </div>
                 <div class="max-w-md mx-auto space-y-3">
                     
-                    <h4 class="font-serif font-bold text-sm text-goldAccent">IAAM — Ikatan Alumni Al-Falahul Makkiyah Majidiyah</h4>
+                    <h4 class="font-serif font-bold text-sm text-goldAccent">Ikatan Alumni Al-Falahul Makkiyah Majidiyah - IAAM</h4>
                     <p class="text-xs text-gray-300 leading-relaxed">Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir.</p>
                     <div class="w-16 h-0.5 bg-goldAccent/40 mx-auto my-2"></div>
                     <p class="text-[10px] text-gray-400">&copy; 2026 IAAM. All Rights Reserved.</p>
@@ -571,17 +571,17 @@ function toggleMusic() {
     
     if (audioElem.paused) {
         audioElem.play().then(() => {
-            document.getElementById('music-label').innerText = 'Jeda Musik';
+            document.getElementById('music-label').innerText = ' Jeda ';
         }).catch(err => console.log(err));
     } else {
         audioElem.pause();
-        document.getElementById('music-label').innerText = 'Putar Musik';
+        document.getElementById('music-label').innerText = ' Putar ';
     }
 }
 
 
         function startCountdown() {
-            const target = new Date('2026-08-31T08:00:00').getTime();
+            const target = new Date('2026-09-02T08:00:00').getTime();
             setInterval(() => {
                 const now = new Date().getTime();
                 const dist = target - now;
@@ -737,16 +737,28 @@ async function loadAdminGreetings() {
 async function deleteAdminGreeting(id) {
     if (!confirm('Apakah Anda yakin ingin menghapus ucapan dan doa ini?')) return;
 
-    const { error } = await supabaseClient.from('greetings').delete().eq('id', id);
+    // Menambahkan .select() untuk memastikan data benar-benar terhapus dari tabel
+    const { data, error } = await supabaseClient
+        .from('greetings')
+        .delete()
+        .eq('id', id)
+        .select();
+
     if (error) {
         alert('Gagal menghapus ucapan: ' + error.message);
         return;
     }
 
-    // Refresh daftar ucapan di panel admin dan halaman utama
+    if (!data || data.length === 0) {
+        alert('Gagal: Data tidak terhapus. Periksa kembali kebijakan RLS atau nama kolom ID di Supabase.');
+        return;
+    }
+
+    // Refresh daftar ucapan jika berhasil dihapus
     loadAdminGreetings();
     loadGreetings(); 
 }
+
 
         function calcStats(data) {
             document.getElementById('stat-total').innerText = data.length;
